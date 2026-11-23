@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import services from"../assets/services.png";
 
@@ -15,6 +15,60 @@ import { FaPhoneAlt } from "react-icons/fa";
 
 
 function Services() {
+
+const [formData, setFormData] = useState({
+  fullName: "",
+  mobile: "",
+  fromLocation: "",
+  toLocation: "",
+  movingDate: ""
+});
+
+const handleChange = (e) => {
+  setFormData({
+    ...formData,
+    [e.target.name]: e.target.value
+  });
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(
+      "http://localhost:5001/api/relocation",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      }
+    );
+
+    const result = await response.json();
+
+    alert(result.message);
+
+    if (response.ok) {
+      setFormData({
+        fullName: "",
+        mobile: "",
+        fromLocation: "",
+        toLocation: "",
+        movingDate: ""
+      });
+    }
+  } catch (error) {
+    alert("Backend server is not running!");
+  }
+};
+
+
+
+
+
+
   return (
     <>
     <div className=' "relative w-full '>
@@ -47,84 +101,83 @@ function Services() {
       </div>
 
       {/* Form */}
-      <form className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-3">
+      <form
+  onSubmit={handleSubmit}
+  className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-3"
+>
+  <div>
+    <label>Full Name *</label>
+    <input
+      type="text"
+      name="fullName"
+      value={formData.fullName}
+      onChange={handleChange}
+      placeholder="Enter your full name"
+      required
+      className="w-full h-10 bg-white px-3 outline-none"
+    />
+  </div>
 
-        {/* Full Name */}
-        <div>
-          <label className="inline-block bg-orange-500 px-2 py-1 text-sm text-black">
-            Full Name *
-          </label>
+  <div>
+    <label>Mobile Number *</label>
+    <input
+      type="tel"
+      name="mobile"
+      value={formData.mobile}
+      onChange={handleChange}
+      placeholder="Enter mobile number"
+      required
+      className="w-full h-10 bg-white px-3 outline-none"
+    />
+  </div>
 
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            className="w-full h-10 bg-white px-3 outline-none"
-          />
-        </div>
+  <div>
+    <label>From Location *</label>
+    <input
+      type="text"
+      name="fromLocation"
+      value={formData.fromLocation}
+      onChange={handleChange}
+      placeholder="Moving from"
+      required
+      className="w-full h-10 bg-white px-3 outline-none"
+    />
+  </div>
 
-        {/* Mobile Number */}
-        <div>
-          <label className="inline-block bg-orange-500 px-2 py-1 text-sm text-black">
-            Mobile Number *
-          </label>
+  <div>
+    <label>To Location *</label>
+    <input
+      type="text"
+      name="toLocation"
+      value={formData.toLocation}
+      onChange={handleChange}
+      placeholder="Moving to"
+      required
+      className="w-full h-10 bg-white px-3 outline-none"
+    />
+  </div>
 
-          <input
-            type="tel"
-            placeholder="Enter mobile number"
-            className="w-full h-10 bg-white px-3 outline-none"
-          />
-        </div>
+  <div>
+    <label>Preferred Moving Date *</label>
+    <input
+      type="date"
+      name="movingDate"
+      value={formData.movingDate}
+      onChange={handleChange}
+      required
+      className="w-full h-10 bg-white px-3 outline-none"
+    />
+  </div>
 
-        {/* From Location */}
-        <div>
-          <label className="inline-block bg-orange-500 px-2 py-1 text-sm text-black">
-            From Location *
-          </label>
-
-          <input
-            type="text"
-            placeholder="Moving from"
-            className="w-full h-10 bg-white px-3 outline-none"
-          />
-        </div>
-
-        {/* To Location */}
-        <div>
-          <label className="inline-block bg-orange-500 px-2 py-1 text-sm text-black">
-            To Location *
-          </label>
-
-          <input
-            type="text"
-            placeholder="Moving to"
-            className="w-full h-10 bg-white px-3 outline-none"
-          />
-        </div>
-
-        {/* Date */}
-        <div>
-          <label className="inline-block bg-orange-500 px-2 py-1 text-sm text-black">
-            Preferred Moving Date *
-          </label>
-
-          <input
-            type="date"
-            className="w-full h-10 bg-white px-3 outline-none"
-          />
-        </div>
-
-        {/* Button */}
-        <div className="flex items-end">
-          <button
-            type="submit"
-            className="w-full h-10 bg-yellow-400 hover:bg-yellow-500
-            text-white font-bold rounded transition duration-300"
-          >
-            Request Quote
-          </button>
-        </div>
-
-      </form>
+  <div className="flex items-end">
+    <button
+      type="submit"
+      className="w-full h-10 bg-yellow-400 hover:bg-yellow-500 text-white font-bold rounded"
+    >
+      Request Quote
+    </button>
+  </div>
+</form>
     </div>
 
     <center>
