@@ -31,36 +31,45 @@ const handleChange = (e) => {
   });
 };
 
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await fetch("https://mover-1.onrender.com/api/relocation", {
+    const response = await fetch(
+      "https://mover-1.onrender.com/api/relocation",
+      {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       }
     );
 
     const result = await response.json();
 
+    if (!response.ok) {
+      alert(result.message || "Form submit failed!");
+      return;
+    }
+
     alert(result.message);
 
-    if (response.ok) {
-      setFormData({
-        fullName: "",
-        mobile: "",
-        fromLocation: "",
-        toLocation: "",
-        movingDate: ""
-      });
-    }
+    setFormData({
+      fullName: "",
+      mobile: "",
+      fromLocation: "",
+      toLocation: "",
+      movingDate: "",
+    });
+
   } catch (error) {
-    alert("Backend server is not running!");
+    console.error("Services Form Error:", error);
+    alert("Error: " + error.message);
   }
 };
+
 
 
 
