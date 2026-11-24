@@ -35,9 +35,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await fetch(
-      "http://localhost:5001/api/relocation",
-      {
+    const response = awaitfetch("https://mover-1.onrender.com/api/relocation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
