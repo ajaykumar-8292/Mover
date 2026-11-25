@@ -62,7 +62,6 @@
 
 
 
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -70,83 +69,45 @@ require("dotenv").config();
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Contact Form Schema
-const contactSchema = new mongoose.Schema({
-  fullName: { type: String, required: true },
-  mobile: { type: String, required: true },
-  email: { type: String, required: true },
-  movingFrom: { type: String, required: true },
-  movingTo: { type: String, required: true },
-  message: { type: String, required: true }
-}, { timestamps: true });
+// Contact Schema
+const contactSchema = new mongoose.Schema(
+  {
+    fullName: { type: String, required: true },
+    mobile: { type: String, required: true },
+    email: { type: String, required: true },
+    movingFrom: { type: String, required: true },
+    movingTo: { type: String, required: true },
+    message: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-// service Form Schema
-const serviceSchema = new mongoose.Schema({
-  fullName: { type: String, required: true },
-  mobile: { type: String, required: true },
-  fromLocation: { type: String, required: true },
-  toLocation: { type: String, required: true },
-  movingDate: { type: String, required: true }
-}, { timestamps: true });
+// Relocation Schema
+const relocationSchema = new mongoose.Schema(
+  {
+    fullName: { type: String, required: true },
+    mobile: { type: String, required: true },
+    fromLocation: { type: String, required: true },
+    toLocation: { type: String, required: true },
+    movingDate: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-// MongoDB Models
+// Models
 const Contact = mongoose.model("Contact", contactSchema);
-const Service = mongoose.model("Service", serviceSchema);
+const Relocation = mongoose.model("Relocation", relocationSchema);
 
 // Home Route
 app.get("/", (req, res) => {
   res.send("HANS Packers and Movers Backend Running");
 });
 
-// Office service API
-app.post("/api/service", async (req, res) => {
-  try {
-    const {
-      fullName,
-      mobile,
-      fromLocation,
-      toLocation,
-      movingDate
-    } = req.body;
-
-    if (!fullName || !mobile || !fromLocation || !toLocation || !movingDate) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill all relocation fields"
-      });
-    }
-
-    const newservice = new Service({
-      fullName,
-      mobile,
-      fromLocation,
-      toLocation,
-      movingDate
-    });
-
-    await newService.save();
-
-    console.log("New Service Request Saved:", newService);
-
-    res.status(201).json({
-      success: true,
-      message: "Service request submitted successfully!"
-    });
-
-  } catch (error) {
-    console.log("Service Error:", error.message);
-
-    res.status(500).json({
-      success: false,
-      message: "Service request could not be saved"
-    });
-  }
-});
-
-// Contact Form API
+// Contact API
 app.post("/api/contact", async (req, res) => {
   try {
     const {
@@ -155,13 +116,20 @@ app.post("/api/contact", async (req, res) => {
       email,
       movingFrom,
       movingTo,
-      message
+      message,
     } = req.body;
 
-    if (!fullName || !mobile || !email || !movingFrom || !movingTo || !message) {
+    if (
+      !fullName ||
+      !mobile ||
+      !email ||
+      !movingFrom ||
+      !movingTo ||
+      !message
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Please fill all contact form fields"
+        message: "Please fill all contact fields",
       });
     }
 
@@ -171,32 +139,82 @@ app.post("/api/contact", async (req, res) => {
       email,
       movingFrom,
       movingTo,
-      message
+      message,
     });
 
     await newContact.save();
 
-    console.log("New Contact Request Saved:", newContact);
+    console.log("Contact Saved Successfully");
 
     res.status(201).json({
       success: true,
-      message: "Your message has been submitted successfully!"
+      message: "Contact submitted successfully!",
     });
-
   } catch (error) {
     console.log("Contact Error:", error.message);
 
     res.status(500).json({
       success: false,
-      message: "Contact form could not be saved"
+      message: "Contact form could not be saved",
     });
   }
 });
 
-// MongoDB Connection and Server Start
+// Relocation API
+app.post("/api/relocation", async (req, res) => {
+  try {
+    const {
+      fullName,
+      mobile,
+      fromLocation,
+      toLocation,
+      movingDate,
+    } = req.body;
+
+    if (
+      !fullName ||
+      !mobile ||
+      !fromLocation ||
+      !toLocation ||
+      !movingDate
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all relocation fields",
+      });
+    }
+
+    const newRelocation = new Relocation({
+      fullName,
+      mobile,
+      fromLocation,
+      toLocation,
+      movingDate,
+    });
+
+    await newRelocation.save();
+
+    console.log("Relocation Saved Successfully");
+
+    res.status(201).json({
+      success: true,
+      message: "Relocation request submitted successfully!",
+    });
+  } catch (error) {
+    console.log("Relocation Error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Relocation request could not be saved",
+    });
+  }
+});
+
+// Server Start
 const PORT = process.env.PORT || 5001;
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected Successfully!");
 
